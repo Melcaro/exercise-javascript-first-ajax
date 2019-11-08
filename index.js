@@ -53,53 +53,69 @@ function sentimentAnalysis(textToAnalyse) {
 
 // Niveau 2: Chuck Norris
 
-function randomChuck() {
-  const url = `https://api.chucknorris.io/jokes/random`;
-  axios
-    .get(url)
-    .then(({ data }) => console.log(data.value))
-    .catch(e => console.error(e));
+function getChuckNorrisFact() {
+  return axios.get(`https://api.chucknorris.io/jokes/random`);
+}
+
+async function randomChuck() {
+  try {
+    const { data } = await getChuckNorrisFact();
+    console.log(data.value);
+  } catch (e) {
+    console.error(e);
+  }
 }
 //randomChuck();
 
-function chuckNorrisInCategory(category) {
-  if (category) {
-    const url = `https://api.chucknorris.io/jokes/random?category=${category}`;
-    axios
-      .get(url)
-      .then(({ data }) => console.log(data.value))
-      .catch(e => console.error(e));
+async function chuckNorrisInCategory(category) {
+  try {
+    if (category) {
+      const { data } = await axios.get(
+        `https://api.chucknorris.io/jokes/random?category=${category}`
+      );
+      console.log(data.value);
+    }
+    randomChuck();
+  } catch (e) {
+    console.error(e);
   }
-  randomChuck();
 }
-//chuckNorrisInCategory();
+chuckNorrisInCategory('history');
 
-function searchChuckNorrisFact(search) {
+async function searchChuckNorrisFact(search) {
   const url = `https://api.chucknorris.io/jokes/search?query=${search}`;
-  axios
-    .get(url)
-    .then(({ data }) => console.log(data.result.map(fact => fact.value)))
-    .catch(e => console.error(e));
+  try {
+    const { data } = await axios.get(url);
+    console.log(data.result.map(fact => fact.value));
+  } catch (e) {
+    console.error(e);
+  }
 }
 //searchChuckNorrisFact('cat');
 
 // Niveau 2: Hacker News
 
-function getTopHackerNewsStories() {
-  return axios
-    .get('https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty')
-    .then(({ data }) => data);
+async function getTopHackerNewsStories() {
+  const { data } = await axios.get(
+    'https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty'
+  );
+  return data;
 }
 //getTopHackerNewsStories();
 
-function getHackerNewsTitleById(storyId) {
-  const url = `https://hacker-news.firebaseio.com/v0/item/${storyId}.json?print=pretty`;
-  axios
-    .get(url)
-    .then(({ data: { title } }) => console.log(title))
-    .catch(e => console.error(e));
+async function getHackerNewsTitleById(storyId) {
+  try {
+    const {
+      data: { title },
+    } = await axios.get(
+      `https://hacker-news.firebaseio.com/v0/item/${storyId}.json?print=pretty`
+    );
+    console.log(title);
+  } catch (e) {
+    console.error(e);
+  }
 }
-//getHackerNewsTitleById(21459237);
+getHackerNewsTitleById(21459237);
 
 function getTopStoriesTitles() {
   getTopHackerNewsStories().then(ids => ids.map(getHackerNewsTitleById));
@@ -147,4 +163,4 @@ function getMembersOfHousesById(houseId) {
     );
 }
 
-getMembersOfHousesById(362);
+//getMembersOfHousesById(362);
